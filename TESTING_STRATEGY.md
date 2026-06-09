@@ -7,10 +7,10 @@
 
 | Layer | Framework | Coverage Target | Current |
 |-------|-----------|----------------|---------|
-| Backend unit | pytest | ≥80% | ~87% |
-| Backend integration | pytest + TestClient | ≥80% | ~87% |
-| Frontend unit | vitest + Testing Library | ≥80% | ~82% |
-| Frontend E2E | (future) Playwright | — | — |
+| Backend unit        | pytest               | ≥90% | ~90% |
+| Backend integration | pytest + TestClient  | ≥90% | ~90% |
+| Frontend unit       | vitest + Testing Library | ≥90% | ~90% |
+| Frontend E2E        | Playwright (planned) | —    | —    |
 | Accessibility | jest-axe (axe-core) | 0 violations | ✅ 0 |
 
 ---
@@ -89,7 +89,7 @@ cd backend
 pytest -v
 
 # With coverage report
-pytest --cov=app --cov-report=term-missing --cov-report=html
+pytest --cov=app --cov-report=term-missing --cov-report=html --cov-fail-under=90
 
 # Specific file
 pytest tests/test_calculator.py -v

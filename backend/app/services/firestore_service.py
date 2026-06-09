@@ -66,8 +66,7 @@ async def save_entry(
     result: CarbonResult,
     insights: list[InsightItem],
 ) -> str:
-    """
-    Persist a carbon entry to Firestore.
+    """Persist a carbon entry to Firestore.
 
     Args:
         device_id: Anonymous device identifier.
@@ -91,8 +90,7 @@ async def save_entry(
 
 
 async def get_history(device_id: str, limit: int = 20) -> list[dict[str, Any]]:
-    """
-    Retrieve carbon history entries for a device from Firestore.
+    """Retrieve carbon history entries for a device from Firestore.
 
     Args:
         device_id: Anonymous device identifier.
@@ -136,7 +134,16 @@ async def save_entry_memory(
     result: CarbonResult,
     insights: list[InsightItem],
 ) -> str:
-    """In-memory save — used when USE_FIRESTORE=false."""
+    """Save a carbon footprint entry to the local in-memory store.
+
+    Args:
+        device_id: Anonymous device identifier.
+        result: Calculated carbon footprint result.
+        insights: Generated reduction insights.
+
+    Returns:
+        Generated memory document ID string.
+    """
     doc_id = str(uuid.uuid4())
     entry: dict[str, Any] = {
         "id": doc_id,
@@ -157,6 +164,14 @@ async def save_entry_memory(
 
 
 async def get_history_memory(device_id: str, limit: int = 20) -> list[dict[str, Any]]:
-    """In-memory history retrieval — used when USE_FIRESTORE=false."""
+    """Retrieve carbon calculation history for a device from memory.
+
+    Args:
+        device_id: Anonymous device identifier.
+        limit: Maximum number of entries to return.
+
+    Returns:
+        List of historical entry dicts.
+    """
     entries = _memory_store.get(device_id, [])
     return entries[:limit]

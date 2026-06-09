@@ -35,6 +35,7 @@ jobs:
             --cov=app \
             --cov-report=xml:coverage.xml \
             --cov-report=term-missing \
+            --cov-fail-under=90 \
             -v
         env:
           USE_GEMINI: false

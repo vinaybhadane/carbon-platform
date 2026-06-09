@@ -74,8 +74,7 @@ async def generate_insights_gemini(
     breakdown: dict[str, float],
     total_kg: float,
 ) -> list[InsightItem]:
-    """
-    Call Vertex AI Gemini 1.5 Flash to generate personalized carbon insights.
+    """Call Vertex AI Gemini 1.5 Flash to generate personalized carbon insights.
 
     Args:
         ranked_categories: Sorted list of {category, kg, percentage} dicts (biggest first).

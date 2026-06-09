@@ -25,10 +25,15 @@ router = APIRouter(tags=["Carbon"])
 )
 @limiter.limit(CALCULATE_LIMIT)
 async def calculate_carbon(request: Request, inputs: CarbonInput) -> CarbonResult:
-    """
-    Calculate annual carbon footprint.
+    """Calculate annual carbon footprint from validated inputs.
 
-    Rate limited to 30 requests/minute per IP.
+    Args:
+        request: FastAPI Request object.
+        inputs: Validated lifestyle inputs.
+
+    Returns:
+        CarbonResult containing total footprint, category breakdown,
+        and target comparisons.
     """
     result = calculate_footprint(inputs.model_dump())
     return CarbonResult(**result, device_id=inputs.device_id)

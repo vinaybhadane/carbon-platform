@@ -20,19 +20,14 @@ from app.carbon.factors import (
 
 
 def calculate_footprint(inputs: dict[str, Any]) -> dict[str, Any]:
-    """
-    Calculate annual carbon footprint from user lifestyle inputs.
+    """Calculate annual carbon footprint from user lifestyle inputs.
 
     Args:
         inputs: Dict matching CarbonInput model fields (already validated).
 
     Returns:
-        Dict with:
-            total_kg: float — total annual kg CO2e
-            breakdown: dict[str, float] — per-category kg CO2e
-            vs_global_average_pct: float — footprint as % of global average (4000 kg)
-            vs_paris_target_pct: float — footprint as % of Paris 1.5°C budget (2000 kg)
-            ranked_categories: list[dict] — categories sorted by emission size desc
+        Dict with total_kg, breakdown, vs_global_average_pct,
+        vs_paris_target_pct, and ranked_categories.
     """
     # ------------------------------------------------------------------
     # Transport
@@ -118,23 +113,18 @@ def get_rule_based_insights(
     flights_short_haul: int = 0,
     flights_long_haul: int = 0,
 ) -> list[dict[str, Any]]:
-    """
-    Generate deterministic, rule-based carbon reduction insights.
-
-    Targets the user's largest emission categories first.
-    Returns exactly 3 insights (may include generic fallbacks if needed).
+    """Generate deterministic, rule-based carbon reduction insights.
 
     Args:
-        ranked_categories: Sorted list of {category, kg, percentage} dicts.
+        ranked_categories: Sorted list of category emission dicts.
         breakdown: Per-category kg CO2e dict.
-        diet_type: User's diet type string.
-        consumption_level: User's consumption level string.
-        flights_short_haul: Number of short-haul flights.
-        flights_long_haul: Number of long-haul flights.
+        diet_type: User's diet type pattern.
+        consumption_level: User's goods consumption pattern level.
+        flights_short_haul: Number of annual short-haul flights.
+        flights_long_haul: Number of annual long-haul flights.
 
     Returns:
-        List of exactly 3 insight dicts with:
-            category, action, estimated_saving_kg, timeframe, priority
+        List of exactly 3 insight dicts with priority and carbon savings.
     """
     transport_kg = breakdown.get("transport", 0.0)
     home_kg = breakdown.get("home", 0.0)
