@@ -1,6 +1,6 @@
 # Carbon Footprint Awareness Platform
 
-![CI](https://github.com/YOUR_USERNAME/carbon-platform/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/vinaybhadane/carbon-platform/actions/workflows/ci.yml/badge.svg)
 ![Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)
 ![Accessibility](https://img.shields.io/badge/accessibility-WCAG%202.1%20AA-brightgreen)
 ![Google Services](https://img.shields.io/badge/google%20services-7-blue)
@@ -14,7 +14,8 @@
 
 ## Live Demo
 
-> Deploy to Cloud Run using the steps below. The Vite frontend is served as a static SPA by the FastAPI backend.
+The platform is deployed and live at:
+👉 **[https://carbon-platform-962545646921.us-central1.run.app](https://carbon-platform-962545646921.us-central1.run.app)**
 
 ---
 
@@ -79,7 +80,7 @@ User Inputs (transport, home, diet, consumption)
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/YOUR_USERNAME/carbon-platform.git
+git clone https://github.com/vinaybhadane/carbon-platform.git
 cd carbon-platform
 
 # 2. Backend — with feature flags disabled (no GCP credentials needed)
@@ -116,18 +117,18 @@ npm test
 ```bash
 # Authenticate
 gcloud auth login
-gcloud config set project YOUR_PROJECT_ID
+gcloud config set project vinay-carbonfootprint
 
 # Build and push image
-gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/carbon-platform .
+gcloud builds submit --tag gcr.io/vinay-carbonfootprint/carbon-platform .
 
 # Deploy to Cloud Run
 gcloud run deploy carbon-platform \
-  --image gcr.io/YOUR_PROJECT_ID/carbon-platform \
+  --image gcr.io/vinay-carbonfootprint/carbon-platform \
   --region us-central1 \
   --platform managed \
   --allow-unauthenticated \
-  --set-env-vars PROJECT_ID=YOUR_PROJECT_ID,REGION=us-central1,ENVIRONMENT=production
+  --set-env-vars PROJECT_ID=vinay-carbonfootprint,REGION=us-central1,ENVIRONMENT=production
 ```
 
 ---
