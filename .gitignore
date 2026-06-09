@@ -34,6 +34,7 @@ Thumbs.db
 *.json
 !firebase.json
 !frontend/package.json
+!frontend/package-lock.json
 !frontend/tsconfig.json
 !frontend/tsconfig.node.json
 gcloud-service-key.json
