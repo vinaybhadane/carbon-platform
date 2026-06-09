@@ -373,6 +373,7 @@ export const CarbonForm = () => {
               ).map(({ value, label, desc }) => (
                 <label
                   key={value}
+                  htmlFor={`diet-type-${value}`}
                   className={`
                     flex items-start gap-3 p-3 rounded-xl border-2 cursor-pointer
                     transition-colors duration-150 hover:border-primary-300
@@ -384,12 +385,14 @@ export const CarbonForm = () => {
                 >
                   <input
                     type="radio"
+                    id={`diet-type-${value}`}
                     name="diet_type"
                     value={value}
                     checked={values.diet_type === value}
                     onChange={() => updateField('diet_type', value)}
                     className="mt-0.5 accent-primary-600"
                   />
+                  <span className="sr-only">{label}</span>
                   <div>
                     <span className="text-sm font-medium text-gray-900">{label}</span>
                     <span className="block text-xs text-gray-500">{desc}</span>
