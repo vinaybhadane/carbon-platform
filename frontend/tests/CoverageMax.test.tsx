@@ -212,7 +212,6 @@ describe('Frontend Coverage Maximiser', () => {
   const mockHistory: HistoryEntry[] = [
     {
       id: 'entry-1',
-      device_id: 'test-device-001',
       timestamp: '2025-06-01T12:00:00Z',
       total_kg: 4500.0,
       breakdown: { transport: 2000, home: 1500, diet: 500, consumption: 500 },
@@ -228,7 +227,6 @@ describe('Frontend Coverage Maximiser', () => {
     },
     {
       id: 'entry-2',
-      device_id: 'test-device-001',
       timestamp: '2025-05-01T12:00:00Z',
       total_kg: 3500.0,
       breakdown: { transport: 1500, home: 1000, diet: 500, consumption: 500 },
