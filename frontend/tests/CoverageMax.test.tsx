@@ -37,24 +37,38 @@ vi.mock('../src/store/carbonStore', () => ({
 // Mock Recharts to force tooltip rendering and execute YAxis formatters in jsdom
 vi.mock('recharts', () => {
   return {
-    ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-    BarChart: ({ children }: any) => <div>{children}</div>,
-    LineChart: ({ children }: any) => <div>{children}</div>,
-    Bar: ({ children }: any) => <div>{children}</div>,
-    Line: ({ children }: any) => <div>{children}</div>,
+    ResponsiveContainer: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+    BarChart: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+    LineChart: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+    Bar: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+    Line: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
     Cell: () => null,
     CartesianGrid: () => null,
     XAxis: () => null,
-    YAxis: ({ tickFormatter }: any) => {
+    YAxis: ({ tickFormatter }: { tickFormatter?: (value: number) => string | number }) => {
       if (tickFormatter) {
         tickFormatter(2500);
       }
       return null;
     },
-    Tooltip: ({ content }: any) => {
+    Tooltip: ({
+      content,
+    }: {
+      content?:
+        | React.ReactNode
+        | ((props: {
+            active?: boolean;
+            payload?: Array<{ value: number; payload: { category: string } }>;
+            label?: string;
+          }) => React.ReactNode);
+    }) => {
       if (content) {
         if (React.isValidElement(content)) {
-          return React.cloneElement(content as React.ReactElement<any>, {
+          return React.cloneElement(content as React.ReactElement<{
+            active?: boolean;
+            payload?: Array<{ value: number; payload: { category: string } }>;
+            label?: string;
+          }>, {
             active: true,
             payload: [{ value: 1500, payload: { category: 'transport' } }],
             label: '1 Jun 2025',
