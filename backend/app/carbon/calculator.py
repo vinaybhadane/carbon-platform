@@ -7,7 +7,7 @@ All inputs come from validated Pydantic models (passed as dict).
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from app.carbon.factors import (
     CONSUMPTION,
@@ -92,7 +92,7 @@ def calculate_footprint(inputs: dict[str, Any]) -> dict[str, Any]:
             }
             for category, kg in breakdown.items()
         ],
-        key=lambda x: x["kg"],
+        key=lambda x: cast(float, x["kg"]),
         reverse=True,
     )
 
@@ -138,7 +138,8 @@ def get_rule_based_insights(
                 "category": "transport",
                 "action": (
                     "Switch to public transport or carpooling for your daily commute. "
-                    "Replacing a petrol car commute with bus or train cuts per-km emissions by ~75%."
+                    "Replacing a petrol car commute with bus or train "
+                    "cuts per-km emissions by ~75%."
                 ),
                 "estimated_saving_kg": round(transport_kg * 0.40, 1),
                 "timeframe": "Achievable within 30 days",
@@ -181,7 +182,8 @@ def get_rule_based_insights(
                 "category": "home",
                 "action": (
                     "Install LED bulbs throughout your home and set a smart thermostat. "
-                    "LEDs use 75% less energy; a 1°C thermostat reduction saves ~3% on heating bills."
+                    "LEDs use 75% less energy; a 1°C thermostat reduction "
+                    "saves ~3% on heating bills."
                 ),
                 "estimated_saving_kg": round(home_kg * 0.20, 1),
                 "timeframe": "Achievable within 30 days",
@@ -194,7 +196,8 @@ def get_rule_based_insights(
                 "category": "home",
                 "action": (
                     "Switch to a 100% renewable electricity tariff. "
-                    "Green energy tariffs are now competitively priced and eliminate electricity grid emissions."
+                    "Green energy tariffs are now competitively priced "
+                    "and eliminate electricity grid emissions."
                 ),
                 "estimated_saving_kg": round(home_kg * 0.15, 1),
                 "timeframe": "Achievable within 7 days",
@@ -209,7 +212,8 @@ def get_rule_based_insights(
                 "category": "diet",
                 "action": (
                     "Reduce red meat consumption to 3 times per week. "
-                    "Beef has 20x the carbon footprint of chicken and 100x that of legumes per gram of protein."
+                    "Beef has 20x the carbon footprint of chicken and "
+                    "100x that of legumes per gram of protein."
                 ),
                 "estimated_saving_kg": 800.0,
                 "timeframe": "Achievable within 30 days",
@@ -237,7 +241,8 @@ def get_rule_based_insights(
                 "category": "consumption",
                 "action": (
                     "Buy second-hand for your next clothing or electronics purchase. "
-                    "Extending a garment's life by 9 months reduces its carbon and water footprint by ~30%."
+                    "Extending a garment's life by 9 months reduces "
+                    "its carbon and water footprint by ~30%."
                 ),
                 "estimated_saving_kg": 600.0,
                 "timeframe": "Next purchase decision",
@@ -249,8 +254,10 @@ def get_rule_based_insights(
             {
                 "category": "consumption",
                 "action": (
-                    "Audit subscriptions and physical goods — cancel unused services and avoid impulse purchases. "
-                    "Reducing consumption by 20% saves both money and ~500 kg CO2e annually."
+                    "Audit subscriptions and physical goods — "
+                    "cancel unused services and avoid impulse purchases. "
+                    "Reducing consumption by 20% saves both money "
+                    "and ~500 kg CO2e annually."
                 ),
                 "estimated_saving_kg": 500.0,
                 "timeframe": "Achievable within 30 days",

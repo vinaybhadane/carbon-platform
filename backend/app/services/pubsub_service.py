@@ -15,6 +15,10 @@ import json
 import logging
 from datetime import UTC, datetime
 
+import google.cloud.pubsub_v1 as pubsub_v1
+
+from app.core.config import get_settings
+
 logger = logging.getLogger(__name__)
 
 
@@ -24,8 +28,6 @@ def _publish_message(
     payload: dict,
 ) -> None:
     """Synchronous Pub/Sub publish (runs in thread-pool executor)."""
-    from google.cloud import pubsub_v1  # noqa: PLC0415
-
     publisher = pubsub_v1.PublisherClient()
     topic_path = publisher.topic_path(project_id, topic_id)
 
@@ -53,8 +55,6 @@ async def publish_insight_request(
         footprint_total: User's total annual footprint in kg CO2e.
         top_category: Name of the user's highest-emission category.
     """
-    from app.core.config import get_settings  # noqa: PLC0415
-
     settings = get_settings()
 
     payload = {
@@ -71,7 +71,7 @@ async def publish_insight_request(
             settings.PUBSUB_TOPIC,
             payload,
         )
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         logger.warning(
             "Pub/Sub publish failed (non-critical): %s — %s",
             type(exc).__name__,

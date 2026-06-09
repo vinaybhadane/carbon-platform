@@ -11,10 +11,16 @@ import asyncio
 import logging
 import uuid
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+from google.cloud import firestore
+from google.cloud.firestore_v1 import FieldFilter
 
 from app.models.carbon import CarbonResult
 from app.models.insights import InsightItem
+
+if TYPE_CHECKING:
+    from google.cloud.firestore import Client as FirestoreClient
 
 logger = logging.getLogger(__name__)
 
@@ -31,10 +37,8 @@ _memory_store: dict[str, list[dict[str, Any]]] = {}
 # ---------------------------------------------------------------------------
 
 
-def _get_client():  # type: ignore[return]
+def _get_client() -> FirestoreClient:
     """Return a Firestore client instance (lazy, not cached — Cloud Run handles pooling)."""
-    from google.cloud import firestore  # noqa: PLC0415
-
     return firestore.Client()
 
 
@@ -101,8 +105,6 @@ async def get_history(device_id: str, limit: int = 20) -> list[dict[str, Any]]:
     """
 
     def _query() -> list[dict[str, Any]]:
-        from google.cloud.firestore_v1 import FieldFilter  # noqa: PLC0415
-
         client = _get_client()
         query = (
             client.collection(COLLECTION)

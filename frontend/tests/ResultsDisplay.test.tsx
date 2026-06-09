@@ -44,7 +44,9 @@ describe('ResultsDisplay', () => {
 
   it('renders the results heading', () => {
     render(<ResultsDisplay result={mockResult} />);
-    expect(screen.getByRole('heading', { name: /your annual carbon footprint/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /your annual carbon footprint/i })
+    ).toBeInTheDocument();
   });
 
   it('renders the total footprint value', () => {
@@ -66,9 +68,7 @@ describe('ResultsDisplay', () => {
   it('global average progressbar has correct aria-valuenow', () => {
     render(<ResultsDisplay result={mockResult} />);
     const bars = screen.getAllByRole('progressbar');
-    const globalBar = bars.find(
-      (b) => b.getAttribute('aria-label')?.includes('global average')
-    );
+    const globalBar = bars.find(b => b.getAttribute('aria-label')?.includes('global average'));
     expect(globalBar).toBeTruthy();
     expect(globalBar!.getAttribute('aria-valuenow')).toBe('170');
   });

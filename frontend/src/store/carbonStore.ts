@@ -57,7 +57,7 @@ export const useCarbonStore = create<CarbonState>((set, get) => ({
   error: null,
   step: 'form',
 
-  setInputs: (inputs) => set((state) => ({ inputs: { ...state.inputs, ...inputs } })),
+  setInputs: inputs => set(state => ({ inputs: { ...state.inputs, ...inputs } })),
 
   calculate: async (inputs: CarbonInput) => {
     set({ isCalculating: true, error: null, result: null, insights: null });
@@ -97,7 +97,6 @@ export const useCarbonStore = create<CarbonState>((set, get) => ({
       await apiClient.saveEntry(result, insights.insights);
     } catch (err) {
       // Non-critical — log but don't surface to user
-      console.warn('Failed to save entry:', err);
     }
   },
 
@@ -115,7 +114,7 @@ export const useCarbonStore = create<CarbonState>((set, get) => ({
     }
   },
 
-  setStep: (step) => set({ step }),
+  setStep: step => set({ step }),
 
   clearError: () => set({ error: null }),
 

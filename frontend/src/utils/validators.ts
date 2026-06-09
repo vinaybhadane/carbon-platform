@@ -21,7 +21,10 @@ export const carbonInputSchema = z.object({
     .string()
     .min(8, 'Device ID must be at least 8 characters')
     .max(64, 'Device ID must be at most 64 characters')
-    .regex(/^[a-zA-Z0-9_-]+$/, 'Device ID may only contain letters, numbers, hyphens and underscores'),
+    .regex(
+      /^[a-zA-Z0-9_-]+$/,
+      'Device ID may only contain letters, numbers, hyphens and underscores'
+    ),
 });
 
 export type CarbonInputForm = z.infer<typeof carbonInputSchema>;

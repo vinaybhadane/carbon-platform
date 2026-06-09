@@ -14,7 +14,9 @@
    Base resets & typography
    -------------------------------------------------------------------------- */
 @layer base {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 
@@ -32,7 +34,9 @@
 
   /* Respect user's reduced motion preference */
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
@@ -94,7 +98,10 @@
    Print styles — strip chrome, show only content
    -------------------------------------------------------------------------- */
 @media print {
-  header, footer, button, nav {
+  header,
+  footer,
+  button,
+  nav {
     display: none !important;
   }
 

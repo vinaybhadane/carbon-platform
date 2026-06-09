@@ -19,7 +19,7 @@ interface InsightsListProps {
 
 export const InsightsList = ({ insightsResponse }: InsightsListProps) => {
   const { insights, source, total_potential_saving_kg } = insightsResponse;
-  const saveEntry = useCarbonStore((s) => s.saveEntry);
+  const saveEntry = useCarbonStore(s => s.saveEntry);
 
   return (
     <section
@@ -78,9 +78,7 @@ export const InsightsList = ({ insightsResponse }: InsightsListProps) => {
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-800">Total potential annual saving</p>
-            <p className="text-xs text-gray-500">
-              If you implement all 3 actions below
-            </p>
+            <p className="text-xs text-gray-500">If you implement all 3 actions below</p>
           </div>
         </div>
       </div>

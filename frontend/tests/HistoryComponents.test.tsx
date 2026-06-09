@@ -64,15 +64,18 @@ vi.mock('recharts', () => {
     }) => {
       if (content) {
         if (React.isValidElement(content)) {
-          return React.cloneElement(content as React.ReactElement<{
-            active?: boolean;
-            payload?: Array<{ value: number; payload: { category: string } }>;
-            label?: string;
-          }>, {
-            active: true,
-            payload: [{ value: 1500, payload: { category: 'transport' } }],
-            label: '1 Jun 2025',
-          });
+          return React.cloneElement(
+            content as React.ReactElement<{
+              active?: boolean;
+              payload?: Array<{ value: number; payload: { category: string } }>;
+              label?: string;
+            }>,
+            {
+              active: true,
+              payload: [{ value: 1500, payload: { category: 'transport' } }],
+              label: '1 Jun 2025',
+            }
+          );
         }
         if (typeof content === 'function') {
           return content({
@@ -87,7 +90,7 @@ vi.mock('recharts', () => {
   };
 });
 
-describe('Frontend Coverage Maximiser', () => {
+describe('History and Chart Components', () => {
   beforeEach(() => {
     mockCalculate.mockClear();
     mockClearError.mockClear();
@@ -203,7 +206,7 @@ describe('Frontend Coverage Maximiser', () => {
     render(<CarbonForm />);
 
     const petrolInput = screen.getByLabelText(/petrol car/i);
-    
+
     // Blur without changes
     fireEvent.blur(petrolInput);
 
@@ -236,7 +239,13 @@ describe('Frontend Coverage Maximiser', () => {
       vs_global_average_pct: 112.5,
       vs_paris_target_pct: 225.0,
       insights: [
-        { category: 'transport', action: 'Carpool.', estimated_saving_kg: 800, timeframe: '30 days', priority: 1 },
+        {
+          category: 'transport',
+          action: 'Carpool.',
+          estimated_saving_kg: 800,
+          timeframe: '30 days',
+          priority: 1,
+        },
       ],
     },
     {
@@ -285,7 +294,9 @@ describe('Frontend Coverage Maximiser', () => {
       { category: 'consumption', kg: 400, percentage: 10.0 },
     ];
     render(<CategoryChart breakdown={{}} ranked_categories={categories} />);
-    expect(screen.getByText('Carbon footprint breakdown by category (annual kg CO₂e)')).toBeInTheDocument();
+    expect(
+      screen.getByText('Carbon footprint breakdown by category (annual kg CO₂e)')
+    ).toBeInTheDocument();
 
     render(<HistoryChart history={mockHistory} />);
     expect(screen.getByText('Footprint Trend')).toBeInTheDocument();

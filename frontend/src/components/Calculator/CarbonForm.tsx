@@ -136,10 +136,10 @@ export const CarbonForm = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<Partial<Record<keyof CarbonInputForm, boolean>>>({});
 
-  const calculate = useCarbonStore((s) => s.calculate);
-  const isCalculating = useCarbonStore((s) => s.isCalculating);
-  const storeError = useCarbonStore((s) => s.error);
-  const clearError = useCarbonStore((s) => s.clearError);
+  const calculate = useCarbonStore(s => s.calculate);
+  const isCalculating = useCarbonStore(s => s.isCalculating);
+  const storeError = useCarbonStore(s => s.error);
+  const clearError = useCarbonStore(s => s.clearError);
 
   const validateField = (field: keyof CarbonInputForm, value: unknown) => {
     const partial = { ...values, [field]: value };
@@ -147,14 +147,14 @@ export const CarbonForm = () => {
     if (!result.success) {
       const fieldErrors = result.error.flatten().fieldErrors;
       const msg = fieldErrors[field]?.[0];
-      setErrors((prev) => ({ ...prev, [field]: msg ?? undefined }));
+      setErrors(prev => ({ ...prev, [field]: msg ?? undefined }));
     } else {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
+      setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
 
   const updateField = <K extends keyof CarbonInputForm>(field: K, value: CarbonInputForm[K]) => {
-    setValues((prev) => ({ ...prev, [field]: value }));
+    setValues(prev => ({ ...prev, [field]: value }));
     if (touched[field]) {
       validateField(field, value);
     }
@@ -162,7 +162,7 @@ export const CarbonForm = () => {
   };
 
   const handleBlur = (field: keyof CarbonInputForm) => {
-    setTouched((prev) => ({ ...prev, [field]: true }));
+    setTouched(prev => ({ ...prev, [field]: true }));
     validateField(field, values[field]);
   };
 
@@ -218,7 +218,7 @@ export const CarbonForm = () => {
             unit="km/year"
             helper="Annual kilometres driven in a petrol or hybrid car"
             error={errors.transport_km_car_petrol}
-            onChange={(v) => updateField('transport_km_car_petrol', v)}
+            onChange={v => updateField('transport_km_car_petrol', v)}
             onBlur={() => handleBlur('transport_km_car_petrol')}
           />
           <InputField
@@ -228,7 +228,7 @@ export const CarbonForm = () => {
             unit="km/year"
             helper="Annual kilometres driven in a diesel car"
             error={errors.transport_km_car_diesel}
-            onChange={(v) => updateField('transport_km_car_diesel', v)}
+            onChange={v => updateField('transport_km_car_diesel', v)}
             onBlur={() => handleBlur('transport_km_car_diesel')}
           />
           <InputField
@@ -238,7 +238,7 @@ export const CarbonForm = () => {
             unit="km/year"
             helper="Annual kilometres driven in a battery electric car"
             error={errors.transport_km_car_electric}
-            onChange={(v) => updateField('transport_km_car_electric', v)}
+            onChange={v => updateField('transport_km_car_electric', v)}
             onBlur={() => handleBlur('transport_km_car_electric')}
           />
           <InputField
@@ -248,7 +248,7 @@ export const CarbonForm = () => {
             unit="km/year"
             helper="Annual kilometres travelled by bus or coach"
             error={errors.transport_km_bus}
-            onChange={(v) => updateField('transport_km_bus', v)}
+            onChange={v => updateField('transport_km_bus', v)}
             onBlur={() => handleBlur('transport_km_bus')}
           />
           <InputField
@@ -258,7 +258,7 @@ export const CarbonForm = () => {
             unit="km/year"
             helper="Annual kilometres by train, metro, or tram"
             error={errors.transport_km_train}
-            onChange={(v) => updateField('transport_km_train', v)}
+            onChange={v => updateField('transport_km_train', v)}
             onBlur={() => handleBlur('transport_km_train')}
           />
           <InputField
@@ -271,7 +271,7 @@ export const CarbonForm = () => {
             step={1}
             min={0}
             max={50}
-            onChange={(v) => updateField('flights_short_haul', Math.round(v))}
+            onChange={v => updateField('flights_short_haul', Math.round(v))}
             onBlur={() => handleBlur('flights_short_haul')}
           />
           <InputField
@@ -284,7 +284,7 @@ export const CarbonForm = () => {
             step={1}
             min={0}
             max={20}
-            onChange={(v) => updateField('flights_long_haul', Math.round(v))}
+            onChange={v => updateField('flights_long_haul', Math.round(v))}
             onBlur={() => handleBlur('flights_long_haul')}
           />
         </div>
@@ -311,7 +311,7 @@ export const CarbonForm = () => {
             unit="kWh/year"
             helper="Check your energy bills — UK average is ~3,700 kWh/year"
             error={errors.home_electricity_kwh}
-            onChange={(v) => updateField('home_electricity_kwh', v)}
+            onChange={v => updateField('home_electricity_kwh', v)}
             onBlur={() => handleBlur('home_electricity_kwh')}
           />
           <InputField
@@ -321,7 +321,7 @@ export const CarbonForm = () => {
             unit="kWh/year"
             helper="UK average is ~12,000 kWh/year for heating and cooking"
             error={errors.home_gas_kwh}
-            onChange={(v) => updateField('home_gas_kwh', v)}
+            onChange={v => updateField('home_gas_kwh', v)}
             onBlur={() => handleBlur('home_gas_kwh')}
           />
           <InputField
@@ -334,7 +334,7 @@ export const CarbonForm = () => {
             step={1}
             min={1}
             max={10}
-            onChange={(v) => updateField('household_size', Math.round(v))}
+            onChange={v => updateField('household_size', Math.round(v))}
             onBlur={() => handleBlur('household_size')}
           />
         </div>
@@ -365,9 +365,21 @@ export const CarbonForm = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {(
                 [
-                  { value: 'meat_heavy', label: '🥩 Meat-heavy', desc: 'Meat with most meals (>100g/day)' },
-                  { value: 'meat_medium', label: '🍗 Meat-moderate', desc: 'Meat a few times a week' },
-                  { value: 'vegetarian', label: '🥚 Vegetarian', desc: 'No meat, but dairy & eggs ok' },
+                  {
+                    value: 'meat_heavy',
+                    label: '🥩 Meat-heavy',
+                    desc: 'Meat with most meals (>100g/day)',
+                  },
+                  {
+                    value: 'meat_medium',
+                    label: '🍗 Meat-moderate',
+                    desc: 'Meat a few times a week',
+                  },
+                  {
+                    value: 'vegetarian',
+                    label: '🥚 Vegetarian',
+                    desc: 'No meat, but dairy & eggs ok',
+                  },
                   { value: 'vegan', label: '🌱 Vegan', desc: 'Fully plant-based diet' },
                 ] as const
               ).map(({ value, label, desc }) => (
@@ -377,9 +389,10 @@ export const CarbonForm = () => {
                   className={`
                     flex items-start gap-3 p-3 rounded-xl border-2 cursor-pointer
                     transition-colors duration-150 hover:border-primary-300
-                    ${values.diet_type === value
-                      ? 'border-primary-500 bg-primary-50'
-                      : 'border-gray-200 bg-white'
+                    ${
+                      values.diet_type === value
+                        ? 'border-primary-500 bg-primary-50'
+                        : 'border-gray-200 bg-white'
                     }
                   `}
                 >
@@ -404,10 +417,7 @@ export const CarbonForm = () => {
 
           {/* Consumption Level */}
           <div className="space-y-2">
-            <label
-              htmlFor="consumption_level"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="consumption_level" className="block text-sm font-medium text-gray-700">
               Shopping & Consumption Level
             </label>
             <span id="consumption-helper" className="text-xs text-gray-500 block">
@@ -416,8 +426,11 @@ export const CarbonForm = () => {
             <select
               id="consumption_level"
               value={values.consumption_level}
-              onChange={(e) =>
-                updateField('consumption_level', e.target.value as CarbonInputForm['consumption_level'])
+              onChange={e =>
+                updateField(
+                  'consumption_level',
+                  e.target.value as CarbonInputForm['consumption_level']
+                )
               }
               aria-describedby="consumption-helper"
               className="
@@ -443,7 +456,9 @@ export const CarbonForm = () => {
           aria-live="assertive"
           className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3"
         >
-          <span className="text-red-500 text-lg" aria-hidden="true">⚠️</span>
+          <span className="text-red-500 text-lg" aria-hidden="true">
+            ⚠️
+          </span>
           <div>
             <p className="text-sm font-medium text-red-800">Calculation failed</p>
             <p className="text-sm text-red-600">{storeError}</p>
@@ -459,7 +474,9 @@ export const CarbonForm = () => {
           type="submit"
           disabled={isCalculating}
           aria-busy={isCalculating}
-          aria-label={isCalculating ? 'Calculating your carbon footprint...' : 'Calculate my carbon footprint'}
+          aria-label={
+            isCalculating ? 'Calculating your carbon footprint...' : 'Calculate my carbon footprint'
+          }
           className="
             flex items-center gap-3 bg-primary-600 text-white
             px-8 py-4 rounded-2xl text-base font-semibold

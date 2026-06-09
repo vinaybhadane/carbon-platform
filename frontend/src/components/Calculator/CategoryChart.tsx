@@ -8,15 +8,7 @@
  *   - All colour choices meet WCAG 4.5:1 contrast against white background
  */
 
-import {
-  Bar,
-  BarChart,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { RankedCategory } from '../../types';
 import { formatCategory, formatKg } from '../../utils/formatters';
 
@@ -51,7 +43,7 @@ const CustomTooltip = ({
 };
 
 export const CategoryChart = ({ breakdown: _breakdown, ranked_categories }: CategoryChartProps) => {
-  const chartData = ranked_categories.map((item) => ({
+  const chartData = ranked_categories.map(item => ({
     category: item.category,
     label: formatCategory(item.category),
     kg: item.kg,
@@ -87,11 +79,8 @@ export const CategoryChart = ({ breakdown: _breakdown, ranked_categories }: Cate
             />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f0fdf4' }} />
             <Bar dataKey="kg" radius={[6, 6, 0, 0]} maxBarSize={64}>
-              {chartData.map((entry) => (
-                <Cell
-                  key={entry.category}
-                  fill={CATEGORY_COLORS[entry.category] ?? '#16a34a'}
-                />
+              {chartData.map(entry => (
+                <Cell key={entry.category} fill={CATEGORY_COLORS[entry.category] ?? '#16a34a'} />
               ))}
             </Bar>
           </BarChart>
@@ -109,7 +98,7 @@ export const CategoryChart = ({ breakdown: _breakdown, ranked_categories }: Cate
           </tr>
         </thead>
         <tbody>
-          {ranked_categories.map((item) => (
+          {ranked_categories.map(item => (
             <tr key={item.category}>
               <th scope="row">{formatCategory(item.category)}</th>
               <td>{Math.round(item.kg)}</td>

@@ -16,10 +16,7 @@ const sizeMap = {
   lg: 'h-8 w-8',
 };
 
-export const LoadingSpinner = ({
-  label = 'Loading...',
-  size = 'md',
-}: LoadingSpinnerProps) => (
+export const LoadingSpinner = ({ label = 'Loading...', size = 'md' }: LoadingSpinnerProps) => (
   <div role="status" aria-label={label} className="flex items-center gap-2">
     <svg
       className={`animate-spin ${sizeMap[size]} text-primary-600`}
@@ -29,14 +26,7 @@ export const LoadingSpinner = ({
       aria-hidden="true"
       focusable="false"
     >
-      <circle
-        className="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="4"
-      />
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
       <path
         className="opacity-75"
         fill="currentColor"

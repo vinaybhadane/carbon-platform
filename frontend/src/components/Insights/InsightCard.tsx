@@ -67,9 +67,7 @@ export const InsightCard = ({ insight, index }: InsightCardProps) => {
             {/* Saving */}
             <div className="flex items-center gap-1.5 bg-primary-50 text-primary-800 rounded-lg px-3 py-1.5">
               <span aria-hidden="true">💚</span>
-              <span className="text-xs font-semibold">
-                Save ~{saving} CO₂e/year
-              </span>
+              <span className="text-xs font-semibold">Save ~{saving} CO₂e/year</span>
             </div>
 
             {/* Timeframe */}

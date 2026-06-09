@@ -14,7 +14,7 @@ from pydantic import BaseModel
 from app.core.config import get_settings
 from app.core.rate_limit import ENTRIES_LIMIT, limiter
 from app.core.security import validate_device_id
-from app.models.carbon import CarbonResult
+from app.models.carbon import CarbonResult, HistoryEntryResponse
 from app.models.insights import InsightItem
 from app.services import firestore_service
 
@@ -41,7 +41,7 @@ class SaveEntryResponse(BaseModel):
     "/entries",
     response_model=SaveEntryResponse,
     summary="Save a carbon footprint entry",
-    description="Persist a carbon result and its associated insights to Firestore for history tracking.",
+    description="Persist a carbon result and its associated insights to Firestore for history tracking.",  # noqa: E501
 )
 @limiter.limit(ENTRIES_LIMIT)
 async def save_entry(request: Request, body: SaveEntryRequest) -> SaveEntryResponse:
@@ -72,6 +72,7 @@ async def save_entry(request: Request, body: SaveEntryRequest) -> SaveEntryRespo
     "/entries/{device_id}",
     summary="Get carbon history for a device",
     description="Retrieve the last 20 carbon footprint entries for a device, newest first.",
+    response_model=list[HistoryEntryResponse],
 )
 @limiter.limit(ENTRIES_LIMIT)
 async def get_entries(
@@ -81,7 +82,7 @@ async def get_entries(
         max_length=64,
         description="Anonymous device identifier",
     ),
-) -> list[dict]:
+) -> list[HistoryEntryResponse]:
     """Retrieve entry history for a device."""
     if not validate_device_id(device_id):
         raise HTTPException(
@@ -97,4 +98,4 @@ async def get_entries(
     else:
         entries = await firestore_service.get_history_memory(device_id=device_id, limit=limit)
 
-    return entries
+    return [HistoryEntryResponse(**entry) for entry in entries]

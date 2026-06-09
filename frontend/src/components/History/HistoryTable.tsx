@@ -17,13 +17,7 @@ interface HistoryTableProps {
   history: HistoryEntry[];
 }
 
-const InsightExpandedRow = ({
-  entry,
-  id,
-}: {
-  entry: HistoryEntry;
-  id: string;
-}) => (
+const InsightExpandedRow = ({ entry, id }: { entry: HistoryEntry; id: string }) => (
   <div
     id={id}
     role="region"
@@ -57,14 +51,16 @@ export const HistoryTable = ({ history }: HistoryTableProps) => {
   if (history.length === 0) return null;
 
   const toggleExpand = (id: string) => {
-    setExpandedId((prev) => (prev === id ? null : id));
+    setExpandedId(prev => (prev === id ? null : id));
   };
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
-          <caption className="sr-only">Carbon footprint history entries, ordered newest first</caption>
+          <caption className="sr-only">
+            Carbon footprint history entries, ordered newest first
+          </caption>
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100">
               <th
@@ -94,7 +90,7 @@ export const HistoryTable = ({ history }: HistoryTableProps) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {history.map((entry) => {
+            {history.map(entry => {
               const topCategory =
                 entry.ranked_categories?.[0]?.category ?? Object.keys(entry.breakdown)[0] ?? '—';
               const isExpanded = expandedId === entry.id;
@@ -102,9 +98,7 @@ export const HistoryTable = ({ history }: HistoryTableProps) => {
 
               return (
                 <Fragment key={entry.id}>
-                  <tr
-                    className="hover:bg-gray-50 transition-colors duration-100"
-                  >
+                  <tr className="hover:bg-gray-50 transition-colors duration-100">
                     <th scope="row" className="px-4 py-3 font-medium text-gray-800 text-left">
                       {formatDate(entry.timestamp)}
                     </th>

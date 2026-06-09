@@ -14,6 +14,10 @@ import asyncio
 import logging
 from datetime import UTC, datetime
 
+from google.cloud import bigquery
+
+from app.core.config import get_settings
+
 logger = logging.getLogger(__name__)
 
 # BigQuery schema for carbon_analytics.carbon_events:
@@ -34,8 +38,6 @@ def _write_to_bigquery(
     project_id: str,
 ) -> None:
     """Synchronous BigQuery insert (runs in thread-pool executor)."""
-    from google.cloud import bigquery  # noqa: PLC0415
-
     client = bigquery.Client(project=project_id)
     table_id = f"{project_id}.{dataset}.{table}"
 
@@ -82,8 +84,6 @@ async def log_event_async(
         insight_source: "gemini" or "rules".
         top_category: Highest-emission category name.
     """
-    from app.core.config import get_settings  # noqa: PLC0415
-
     settings = get_settings()
 
     try:
@@ -98,7 +98,7 @@ async def log_event_async(
             settings.BIGQUERY_TABLE,
             settings.PROJECT_ID,
         )
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         logger.warning(
             "BigQuery logging failed (non-critical): %s — %s",
             type(exc).__name__,

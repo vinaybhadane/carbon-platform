@@ -154,9 +154,7 @@ class TestFirestoreServiceIntegration:
 
         with patch("app.services.firestore_service._get_client", return_value=mock_client):
             doc_id = await firestore_service.save_entry(
-                device_id="dev-test-123",
-                result=_make_result(),
-                insights=[_make_insight()]
+                device_id="dev-test-123", result=_make_result(), insights=[_make_insight()]
             )
             assert doc_id == "mock-doc-123"
             mock_client.collection.assert_called_with("carbon_entries")
@@ -179,12 +177,13 @@ class TestFirestoreServiceIntegration:
             "total_kg": 3000.0,
             "breakdown": {},
             "ranked_categories": [],
-            "insights": []
+            "insights": [],
         }
 
         mock_query = MagicMock()
         mock_query.stream.return_value = [mock_doc1]
-        mock_client.collection.return_value.where.return_value.order_by.return_value.limit.return_value = mock_query
+        collection_mock = mock_client.collection.return_value
+        collection_mock.where.return_value.order_by.return_value.limit.return_value = mock_query
 
         with patch("app.services.firestore_service._get_client", return_value=mock_client):
             history = await firestore_service.get_history(device_id="dev-test-123", limit=5)
@@ -205,6 +204,7 @@ class TestBigQueryLogging:
     async def test_log_event_async_catches_exceptions(self):
         """log_event_async must never raise — it catches all exceptions internally."""
         from app.services import bigquery_service
+
         with patch("google.cloud.bigquery.Client", side_effect=Exception("BQ failure")):
             result = await bigquery_service.log_event_async(
                 total_kg=5000.0,
@@ -223,10 +223,7 @@ class TestBigQueryLogging:
 
         with patch("google.cloud.bigquery.Client", return_value=mock_client):
             await bigquery_service.log_event_async(
-                total_kg=5000.0,
-                diet_type="vegan",
-                insight_source="rules",
-                top_category="home"
+                total_kg=5000.0, diet_type="vegan", insight_source="rules", top_category="home"
             )
             mock_client.insert_rows_json.assert_called_once()
 
@@ -243,6 +240,7 @@ class TestPubSubService:
     async def test_publish_insight_request_catches_exceptions(self):
         """publish_insight_request must never raise — it catches all exceptions internally."""
         from app.services import pubsub_service
+
         with patch("google.cloud.pubsub_v1.PublisherClient", side_effect=Exception("PubSub down")):
             result = await pubsub_service.publish_insight_request(
                 footprint_total=5000.0,
@@ -261,8 +259,7 @@ class TestPubSubService:
 
         with patch("google.cloud.pubsub_v1.PublisherClient", return_value=mock_publisher):
             await pubsub_service.publish_insight_request(
-                footprint_total=5000.0,
-                top_category="home"
+                footprint_total=5000.0, top_category="home"
             )
             mock_publisher.publish.assert_called_once()
 
@@ -280,22 +277,41 @@ class TestGeminiService:
         from app.services import gemini_service
 
         mock_response = MagicMock()
-        mock_response.text = json.dumps([
-            {"category": "diet", "action": "Swap beef.", "estimated_saving_kg": 400.0, "timeframe": "30 days", "priority": 1},
-            {"category": "transport", "action": "Carpool.", "estimated_saving_kg": 300.0, "timeframe": "30 days", "priority": 2},
-            {"category": "home", "action": "LEDs.", "estimated_saving_kg": 200.0, "timeframe": "30 days", "priority": 3}
-        ])
+        mock_response.text = json.dumps(
+            [
+                {
+                    "category": "diet",
+                    "action": "Swap beef.",
+                    "estimated_saving_kg": 400.0,
+                    "timeframe": "30 days",
+                    "priority": 1,
+                },
+                {
+                    "category": "transport",
+                    "action": "Carpool.",
+                    "estimated_saving_kg": 300.0,
+                    "timeframe": "30 days",
+                    "priority": 2,
+                },
+                {
+                    "category": "home",
+                    "action": "LEDs.",
+                    "estimated_saving_kg": 200.0,
+                    "timeframe": "30 days",
+                    "priority": 3,
+                },
+            ]
+        )
 
         mock_model = MagicMock()
         mock_model.generate_content.return_value = mock_response
 
-        with patch("vertexai.init"), \
-             patch("vertexai.generative_models.GenerativeModel", return_value=mock_model):
-
+        with (
+            patch("vertexai.init"),
+            patch("vertexai.generative_models.GenerativeModel", return_value=mock_model),
+        ):
             res = await gemini_service.generate_insights_gemini(
-                ranked_categories=[],
-                breakdown={},
-                total_kg=4000.0
+                ranked_categories=[], breakdown={}, total_kg=4000.0
             )
             assert len(res) == 3
             assert res[0].category == "diet"
@@ -305,22 +321,45 @@ class TestGeminiService:
         from app.services import gemini_service
 
         mock_response = MagicMock()
-        mock_response.text = "```json\n" + json.dumps([
-            {"category": "diet", "action": "Swap beef.", "estimated_saving_kg": 400.0, "timeframe": "30 days", "priority": 1},
-            {"category": "transport", "action": "Carpool.", "estimated_saving_kg": 300.0, "timeframe": "30 days", "priority": 2},
-            {"category": "home", "action": "LEDs.", "estimated_saving_kg": 200.0, "timeframe": "30 days", "priority": 3}
-        ]) + "\n```"
+        mock_response.text = (
+            "```json\n"
+            + json.dumps(
+                [
+                    {
+                        "category": "diet",
+                        "action": "Swap beef.",
+                        "estimated_saving_kg": 400.0,
+                        "timeframe": "30 days",
+                        "priority": 1,
+                    },
+                    {
+                        "category": "transport",
+                        "action": "Carpool.",
+                        "estimated_saving_kg": 300.0,
+                        "timeframe": "30 days",
+                        "priority": 2,
+                    },
+                    {
+                        "category": "home",
+                        "action": "LEDs.",
+                        "estimated_saving_kg": 200.0,
+                        "timeframe": "30 days",
+                        "priority": 3,
+                    },
+                ]
+            )
+            + "\n```"
+        )
 
         mock_model = MagicMock()
         mock_model.generate_content.return_value = mock_response
 
-        with patch("vertexai.init"), \
-             patch("vertexai.generative_models.GenerativeModel", return_value=mock_model):
-
+        with (
+            patch("vertexai.init"),
+            patch("vertexai.generative_models.GenerativeModel", return_value=mock_model),
+        ):
             res = await gemini_service.generate_insights_gemini(
-                ranked_categories=[],
-                breakdown={},
-                total_kg=4000.0
+                ranked_categories=[], breakdown={}, total_kg=4000.0
             )
             assert len(res) == 3
             assert res[0].category == "diet"
@@ -333,14 +372,13 @@ class TestGeminiService:
         mock_model = MagicMock()
         mock_model.generate_content.side_effect = Exception("API limit")
 
-        with patch("vertexai.init"), \
-             patch("vertexai.generative_models.GenerativeModel", return_value=mock_model):
-
+        with (
+            patch("vertexai.init"),
+            patch("vertexai.generative_models.GenerativeModel", return_value=mock_model),
+        ):
             with pytest.raises(GeminiUnavailableError):
                 await gemini_service.generate_insights_gemini(
-                    ranked_categories=[],
-                    breakdown={},
-                    total_kg=4000.0
+                    ranked_categories=[], breakdown={}, total_kg=4000.0
                 )
 
 
@@ -357,29 +395,34 @@ class TestRoutingConditionalBranches:
         from app.core.config import Settings
 
         mock_settings = Settings(
-            USE_FIRESTORE=True,
-            USE_GEMINI=False,
-            USE_BIGQUERY=False,
-            USE_PUBSUB=False
+            USE_FIRESTORE=True, USE_GEMINI=False, USE_BIGQUERY=False, USE_PUBSUB=False
         )
 
         payload = {
             "carbon_result": {
                 "total_kg": 5000.0,
-                "breakdown": {"transport": 2500.0, "home": 1000.0, "diet": 1000.0, "consumption": 500.0},
+                "breakdown": {
+                    "transport": 2500.0,
+                    "home": 1000.0,
+                    "diet": 1000.0,
+                    "consumption": 500.0,
+                },
                 "vs_global_average_pct": 125.0,
                 "vs_paris_target_pct": 250.0,
-                "ranked_categories": [
-                    {"category": "transport", "kg": 2500.0, "percentage": 50.0}
-                ],
-                "device_id": "test-device-001"
+                "ranked_categories": [{"category": "transport", "kg": 2500.0, "percentage": 50.0}],
+                "device_id": "test-device-001",
             },
-            "insights": []
+            "insights": [],
         }
 
-        with patch("app.routes.entries.get_settings", return_value=mock_settings), \
-             patch("app.routes.entries.firestore_service.save_entry", new_callable=AsyncMock, return_value="doc-firestore-123"):
-
+        with (
+            patch("app.routes.entries.get_settings", return_value=mock_settings),
+            patch(
+                "app.routes.entries.firestore_service.save_entry",
+                new_callable=AsyncMock,
+                return_value="doc-firestore-123",
+            ),
+        ):
             response = client.post("/api/entries", json=payload)
             assert response.status_code == 200
             assert response.json()["id"] == "doc-firestore-123"
@@ -389,15 +432,17 @@ class TestRoutingConditionalBranches:
         from app.core.config import Settings
 
         mock_settings = Settings(
-            USE_FIRESTORE=True,
-            USE_GEMINI=False,
-            USE_BIGQUERY=False,
-            USE_PUBSUB=False
+            USE_FIRESTORE=True, USE_GEMINI=False, USE_BIGQUERY=False, USE_PUBSUB=False
         )
 
-        with patch("app.routes.entries.get_settings", return_value=mock_settings), \
-             patch("app.routes.entries.firestore_service.get_history", new_callable=AsyncMock, return_value=[{"id": "doc-firestore-123"}]):
-
+        with (
+            patch("app.routes.entries.get_settings", return_value=mock_settings),
+            patch(
+                "app.routes.entries.firestore_service.get_history",
+                new_callable=AsyncMock,
+                return_value=[{"id": "doc-firestore-123"}],
+            ),
+        ):
             response = client.get("/api/entries/test-device-001")
             assert response.status_code == 200
             assert response.json()[0]["id"] == "doc-firestore-123"
@@ -407,30 +452,31 @@ class TestRoutingConditionalBranches:
         from app.core.config import Settings
 
         mock_settings = Settings(
-            USE_GEMINI=False,
-            USE_FIRESTORE=False,
-            USE_BIGQUERY=True,
-            USE_PUBSUB=True
+            USE_GEMINI=False, USE_FIRESTORE=False, USE_BIGQUERY=True, USE_PUBSUB=True
         )
 
         payload = {
             "carbon_result": {
                 "total_kg": 5000.0,
-                "breakdown": {"transport": 2500.0, "home": 1000.0, "diet": 1000.0, "consumption": 500.0},
+                "breakdown": {
+                    "transport": 2500.0,
+                    "home": 1000.0,
+                    "diet": 1000.0,
+                    "consumption": 500.0,
+                },
                 "vs_global_average_pct": 125.0,
                 "vs_paris_target_pct": 250.0,
-                "ranked_categories": [
-                    {"category": "transport", "kg": 2500.0, "percentage": 50.0}
-                ],
-                "device_id": "test-device-001"
+                "ranked_categories": [{"category": "transport", "kg": 2500.0, "percentage": 50.0}],
+                "device_id": "test-device-001",
             },
-            "device_id": "test-device-001"
+            "device_id": "test-device-001",
         }
 
-        with patch("app.routes.insights.get_settings", return_value=mock_settings), \
-             patch("app.routes.insights.bigquery_service.log_event_async") as mock_bq, \
-             patch("app.routes.insights.pubsub_service.publish_insight_request") as mock_ps:
-
+        with (
+            patch("app.routes.insights.get_settings", return_value=mock_settings),
+            patch("app.routes.insights.bigquery_service.log_event_async") as mock_bq,
+            patch("app.routes.insights.pubsub_service.publish_insight_request") as mock_ps,
+        ):
             response = client.post("/api/insights", json=payload)
             assert response.status_code == 200
             mock_bq.assert_called_once()

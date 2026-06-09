@@ -11,12 +11,14 @@ After generating insights, fires background tasks to:
 
 import asyncio
 import logging
+from typing import Literal, cast
 
 from fastapi import APIRouter, Request
 
 from app.carbon.calculator import get_rule_based_insights
 from app.core.config import get_settings
 from app.core.rate_limit import INSIGHTS_LIMIT, limiter
+from app.models.carbon import CarbonResult
 from app.models.insights import InsightItem, InsightsRequest, InsightsResponse
 from app.services import bigquery_service, pubsub_service
 from app.services.gemini_service import GeminiUnavailableError, generate_insights_gemini
@@ -44,9 +46,9 @@ async def get_insights(request: Request, body: InsightsRequest) -> InsightsRespo
     """
     settings = get_settings()
     result = body.carbon_result
-    ranked = result.ranked_categories
+    top_category = result.ranked_categories[0].category if result.ranked_categories else "general"
+    ranked = [item.model_dump() for item in result.ranked_categories]
     breakdown = result.breakdown
-    top_category = ranked[0]["category"] if ranked else "general"
 
     source: str
     raw_insights: list[InsightItem]
@@ -78,7 +80,7 @@ async def get_insights(request: Request, body: InsightsRequest) -> InsightsRespo
         asyncio.create_task(
             bigquery_service.log_event_async(
                 total_kg=result.total_kg,
-                diet_type=result.breakdown.get("diet_type", "unknown"),
+                diet_type=str(result.breakdown.get("diet_type", "unknown")),
                 insight_source=source,
                 top_category=top_category,
             )
@@ -96,12 +98,12 @@ async def get_insights(request: Request, body: InsightsRequest) -> InsightsRespo
 
     return InsightsResponse(
         insights=raw_insights,
-        source=source,  # type: ignore[arg-type]
+        source=cast(Literal["gemini", "rules"], source),
         total_potential_saving_kg=total_saving,
     )
 
 
-def _apply_rule_engine(result) -> list[InsightItem]:  # type: ignore[no-untyped-def]
+def _apply_rule_engine(result: CarbonResult) -> list[InsightItem]:
     """Convert rule engine output dicts to InsightItem instances."""
     # Extract extra fields needed by the rule engine from ranked categories
     diet_type = "meat_medium"
@@ -109,8 +111,9 @@ def _apply_rule_engine(result) -> list[InsightItem]:  # type: ignore[no-untyped-
     flights_short = 0
     flights_long = 0
 
+    ranked = [item.model_dump() for item in result.ranked_categories]
     raw_dicts = get_rule_based_insights(
-        ranked_categories=result.ranked_categories,
+        ranked_categories=ranked,
         breakdown=result.breakdown,
         diet_type=diet_type,
         consumption_level=consumption_level,

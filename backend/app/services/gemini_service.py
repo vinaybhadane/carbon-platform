@@ -34,7 +34,8 @@ def _build_prompt(
         for i, item in enumerate(ranked_categories)
     )
 
-    return f"""You are a carbon footprint reduction expert helping a user reduce their personal CO2e emissions.
+    return f"""\
+You are a carbon footprint reduction expert helping a user reduce their personal CO2e emissions.
 
 USER'S CARBON FOOTPRINT PROFILE:
 - Total annual footprint: {total_kg} kg CO2e/year
@@ -48,15 +49,15 @@ REQUIREMENTS for each action:
 1. Target this user's ACTUAL biggest emission sources (use the ranked list above)
 2. Include a SPECIFIC estimated annual CO2e saving in kg (be realistic, not exaggerated)
 3. Be ACTIONABLE within 30 days — no vague advice like "be more conscious"
-4. Be SPECIFIC — e.g., "Switch your daily 15 km petrol car commute to the train" not just "use less transport"
-5. The saving estimate must reflect the user's actual numbers (e.g., if they drive 20,000 km/year, calculate accordingly)
+4. Be SPECIFIC — e.g., "Switch daily 15 km petrol commute to train" not just "use less transit"
+5. The saving estimate must reflect user's actual numbers (e.g., drive 20k km/year)
 
 RESPONSE FORMAT:
 Return ONLY a valid JSON array. No markdown, no explanation, no code fences. Example:
 [
   {{
     "category": "transport",
-    "action": "Replace your daily petrol car commute with public transport 4 days per week, keeping the car for one day. This targets your largest emission source directly.",
+    "action": "Replace daily petrol car commute with transit 4 days per week.",
     "estimated_saving_kg": 1200.0,
     "timeframe": "Achievable within 30 days",
     "priority": 1

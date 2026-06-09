@@ -86,7 +86,7 @@ describe('InsightsList', () => {
   it('each InsightCard has article role with aria-label', () => {
     render(<InsightsList insightsResponse={mockInsightsGemini} />);
     const articles = screen.getAllByRole('article');
-    articles.forEach((article) => {
+    articles.forEach(article => {
       expect(article).toHaveAttribute('aria-label');
     });
   });

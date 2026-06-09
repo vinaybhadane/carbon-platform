@@ -91,16 +91,17 @@ const mockHistory: HistoryEntry[] = [
 // Mock Zustand store for components that need it
 // --------------------------------------------------------------------------
 vi.mock('../src/store/carbonStore', () => ({
-  useCarbonStore: (selector: (s: Record<string, unknown>) => unknown) => selector({
-    fetchInsights: vi.fn(),
-    isLoadingInsights: false,
-    insights: null,
-    saveEntry: vi.fn(),
-    error: null,
-    clearError: vi.fn(),
-    isCalculating: false,
-    calculate: vi.fn(),
-  }),
+  useCarbonStore: (selector: (s: Record<string, unknown>) => unknown) =>
+    selector({
+      fetchInsights: vi.fn(),
+      isLoadingInsights: false,
+      insights: null,
+      saveEntry: vi.fn(),
+      error: null,
+      clearError: vi.fn(),
+      isCalculating: false,
+      calculate: vi.fn(),
+    }),
 }));
 
 // --------------------------------------------------------------------------

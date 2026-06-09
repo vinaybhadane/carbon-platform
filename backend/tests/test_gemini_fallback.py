@@ -52,7 +52,9 @@ class TestGeminiFallbackTriggers:
 
     @pytest.mark.asyncio
     async def test_network_error_triggers_unavailable_error(self):
-        """A network-level exception inside generate_insights_gemini raises GeminiUnavailableError."""
+        """A network-level exception inside generate_insights_gemini
+        raises GeminiUnavailableError.
+        """
         with (
             patch("app.services.gemini_service.get_settings", return_value=_make_settings()),
             patch("builtins.__import__", side_effect=ConnectionError("network error")),

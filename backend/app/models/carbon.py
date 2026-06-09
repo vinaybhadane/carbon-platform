@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -95,6 +95,14 @@ class CarbonInput(BaseModel):
     )
 
 
+class RankedCategory(BaseModel):
+    """A single emission category ranked by emission size."""
+
+    category: str = Field(description="Category name: transport, home, diet, or consumption")
+    kg: float = Field(ge=0, description="Emissions for this category in kg CO\u2082e")
+    percentage: float = Field(ge=0, le=100, description="Percentage of total footprint")
+
+
 class CarbonResult(BaseModel):
     """Calculated carbon footprint result returned to the client."""
 
@@ -108,7 +116,38 @@ class CarbonResult(BaseModel):
     vs_paris_target_pct: float = Field(
         description="User's footprint as a percentage of the Paris 1.5°C target (2000 kg CO2e)"
     )
-    ranked_categories: list[dict[str, Any]] = Field(
-        description="Categories sorted by emission size descending; each has category, kg, percentage"
+    ranked_categories: list[RankedCategory] = Field(
+        description=(
+            "Categories sorted by emission size descending; "
+            "each has category, kg, percentage"
+        )
     )
     device_id: str = Field(description="Device identifier echoed back for client correlation")
+
+
+class HistoryEntryResponse(BaseModel):
+    """A single carbon footprint history entry returned from storage."""
+
+    model_config = {"extra": "allow"}
+
+    id: str = Field(description="Firestore document ID")
+    timestamp: str = Field(
+        default="",
+        description="ISO 8601 UTC timestamp when the entry was recorded",
+    )
+    total_kg: float = Field(
+        default=0.0, ge=0, description="Total annual carbon footprint in kg CO\u2082e"
+    )
+    breakdown: dict[str, float] = Field(
+        default_factory=dict, description="Emission breakdown by category in kg CO\u2082e"
+    )
+    vs_global_average_pct: float = Field(
+        default=0.0, description="Footprint as a percentage of the global average"
+    )
+    vs_paris_target_pct: float = Field(
+        default=0.0, description="Footprint as a percentage of the Paris 1.5\u00b0C target"
+    )
+    ranked_categories: list[RankedCategory] = Field(
+        default_factory=list, description="Categories sorted by emission size descending"
+    )
+

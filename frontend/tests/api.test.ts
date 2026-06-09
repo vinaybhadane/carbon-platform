@@ -67,7 +67,9 @@ function mockFetchError(status: number, detail = 'Internal Server Error') {
 // Tests
 // --------------------------------------------------------------------------
 describe('apiClient.calculateFootprint', () => {
-  afterEach(() => { vi.restoreAllMocks(); });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   it('calls the correct endpoint with POST', async () => {
     const spy = mockFetchSuccess(mockResult);
@@ -98,7 +100,9 @@ describe('apiClient.calculateFootprint', () => {
 });
 
 describe('apiClient.getInsights', () => {
-  afterEach(() => { vi.restoreAllMocks(); });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   it('calls the correct endpoint with POST', async () => {
     const spy = mockFetchSuccess({
@@ -123,7 +127,9 @@ describe('apiClient.getInsights', () => {
 });
 
 describe('apiClient.getHistory', () => {
-  afterEach(() => { vi.restoreAllMocks(); });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   it('calls the correct endpoint with GET', async () => {
     const spy = mockFetchSuccess([]);
@@ -144,7 +150,9 @@ describe('apiClient.getHistory', () => {
 });
 
 describe('apiClient.saveEntry', () => {
-  afterEach(() => { vi.restoreAllMocks(); });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   it('calls the correct endpoint with POST', async () => {
     const spy = mockFetchSuccess({ id: 'new-doc-id', saved_at: '2024-01-15T12:00:00Z' });

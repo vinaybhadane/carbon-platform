@@ -35,9 +35,10 @@ const NavLink = ({
     className={`
       px-4 py-2 rounded-xl text-sm font-medium transition-all duration-150
       focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-      ${active
-        ? 'bg-primary-600 text-white shadow-md shadow-primary-600/20'
-        : 'text-gray-600 hover:text-primary-700 hover:bg-primary-50'
+      ${
+        active
+          ? 'bg-primary-600 text-white shadow-md shadow-primary-600/20'
+          : 'text-gray-600 hover:text-primary-700 hover:bg-primary-50'
       }
     `}
   >
@@ -46,14 +47,14 @@ const NavLink = ({
 );
 
 function AppContent() {
-  const step = useCarbonStore((s) => s.step);
-  const setStep = useCarbonStore((s) => s.setStep);
-  const result = useCarbonStore((s) => s.result);
-  const insights = useCarbonStore((s) => s.insights);
-  const history = useCarbonStore((s) => s.history);
-  const isLoadingHistory = useCarbonStore((s) => s.isLoadingHistory);
-  const fetchHistory = useCarbonStore((s) => s.fetchHistory);
-  const reset = useCarbonStore((s) => s.reset);
+  const step = useCarbonStore(s => s.step);
+  const setStep = useCarbonStore(s => s.setStep);
+  const result = useCarbonStore(s => s.result);
+  const insights = useCarbonStore(s => s.insights);
+  const history = useCarbonStore(s => s.history);
+  const isLoadingHistory = useCarbonStore(s => s.isLoadingHistory);
+  const fetchHistory = useCarbonStore(s => s.fetchHistory);
+  const reset = useCarbonStore(s => s.reset);
 
   const handleHistoryClick = () => {
     setStep('history');
@@ -74,7 +75,10 @@ function AppContent() {
       {/* ------------------------------------------------------------------ */}
       {/* Header / Navigation                                                  */}
       {/* ------------------------------------------------------------------ */}
-      <header role="banner" className="sticky top-0 z-40 bg-white/90 backdrop-blur-sm border-b border-gray-100 shadow-sm">
+      <header
+        role="banner"
+        className="sticky top-0 z-40 bg-white/90 backdrop-blur-sm border-b border-gray-100 shadow-sm"
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           {/* Logo */}
           <button
@@ -82,7 +86,9 @@ function AppContent() {
             aria-label="Carbon Footprint Platform — return to calculator"
             className="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg p-1"
           >
-            <span className="text-2xl" aria-hidden="true">🌍</span>
+            <span className="text-2xl" aria-hidden="true">
+              🌍
+            </span>
             <div className="text-left">
               <span className="block text-sm font-bold text-gray-900 leading-tight">
                 Carbon Platform
@@ -104,11 +110,7 @@ function AppContent() {
                 />
               </li>
               <li>
-                <NavLink
-                  label="History"
-                  active={step === 'history'}
-                  onClick={handleHistoryClick}
-                />
+                <NavLink label="History" active={step === 'history'} onClick={handleHistoryClick} />
               </li>
             </ul>
           </nav>
@@ -125,8 +127,8 @@ function AppContent() {
               What's Your Carbon Footprint?
             </h1>
             <p className="text-primary-100 text-base sm:text-lg max-w-2xl mx-auto">
-              Enter your lifestyle data below to calculate your annual CO₂e emissions,
-              compare to global benchmarks, and receive AI-powered personalised actions.
+              Enter your lifestyle data below to calculate your annual CO₂e emissions, compare to
+              global benchmarks, and receive AI-powered personalised actions.
             </p>
             <div className="flex justify-center gap-6 mt-6 text-sm text-primary-200">
               <span className="flex items-center gap-1.5">
@@ -198,10 +200,7 @@ function AppContent() {
       {/* ------------------------------------------------------------------ */}
       {/* Footer                                                               */}
       {/* ------------------------------------------------------------------ */}
-      <footer
-        role="contentinfo"
-        className="border-t border-gray-100 bg-white mt-16 py-8 px-4"
-      >
+      <footer role="contentinfo" className="border-t border-gray-100 bg-white mt-16 py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
             <div>

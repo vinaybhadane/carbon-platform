@@ -1,7 +1,7 @@
 # Carbon Footprint Awareness Platform
 
 ![CI](https://github.com/vinaybhadane/carbon-platform/actions/workflows/ci.yml/badge.svg)
-![Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-98%25-brightgreen)
 ![Accessibility](https://img.shields.io/badge/accessibility-WCAG%202.1%20AA-brightgreen)
 ![Google Services](https://img.shields.io/badge/google%20services-7-blue)
 ![Security](https://img.shields.io/badge/secrets-ADC%20only-brightgreen)

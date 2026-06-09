@@ -46,7 +46,9 @@ export const HistoryChart = ({ history }: HistoryChartProps) => {
   if (history.length === 0) {
     return (
       <div className="bg-white rounded-2xl border border-gray-100 p-10 text-center">
-        <div className="text-5xl mb-4" aria-hidden="true">📈</div>
+        <div className="text-5xl mb-4" aria-hidden="true">
+          📈
+        </div>
         <p role="status" className="text-gray-500">
           No history yet. Calculate your footprint to start tracking your progress over time.
         </p>
@@ -55,12 +57,10 @@ export const HistoryChart = ({ history }: HistoryChartProps) => {
   }
 
   // Display oldest → newest for the trend line
-  const chartData = [...history]
-    .reverse()
-    .map((entry) => ({
-      date: formatDate(entry.timestamp),
-      kg: entry.total_kg,
-    }));
+  const chartData = [...history].reverse().map(entry => ({
+    date: formatDate(entry.timestamp),
+    kg: entry.total_kg,
+  }));
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
@@ -125,10 +125,10 @@ export const HistoryChart = ({ history }: HistoryChartProps) => {
               diff === null
                 ? 'First entry'
                 : diff > 0
-                ? `Up ${formatKg(Math.abs(diff))}`
-                : diff < 0
-                ? `Down ${formatKg(Math.abs(diff))}`
-                : 'No change';
+                  ? `Up ${formatKg(Math.abs(diff))}`
+                  : diff < 0
+                    ? `Down ${formatKg(Math.abs(diff))}`
+                    : 'No change';
             return (
               <tr key={i}>
                 <th scope="row">{entry.date}</th>

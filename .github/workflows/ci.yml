@@ -29,6 +29,9 @@ jobs:
       - name: Lint with ruff
         run: cd backend && ruff check . --output-format=github
 
+      - name: Type check with mypy
+        run: cd backend && mypy app --ignore-missing-imports
+
       - name: Run tests with coverage
         run: |
           cd backend && pytest \

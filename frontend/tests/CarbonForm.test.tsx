@@ -23,7 +23,7 @@ vi.mock('../src/store/carbonStore', () => ({
 }));
 
 // Mock getDeviceId to return a predictable value
-vi.mock('../src/utils/formatters', async (importOriginal) => {
+vi.mock('../src/utils/formatters', async importOriginal => {
   const mod = await importOriginal<typeof import('../src/utils/formatters')>();
   return {
     ...mod,

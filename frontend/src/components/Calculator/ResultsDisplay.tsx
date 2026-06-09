@@ -74,9 +74,9 @@ const ComparisonBar = ({
 };
 
 export const ResultsDisplay = ({ result }: ResultsDisplayProps) => {
-  const fetchInsights = useCarbonStore((s) => s.fetchInsights);
-  const isLoadingInsights = useCarbonStore((s) => s.isLoadingInsights);
-  const insights = useCarbonStore((s) => s.insights);
+  const fetchInsights = useCarbonStore(s => s.fetchInsights);
+  const isLoadingInsights = useCarbonStore(s => s.isLoadingInsights);
+  const insights = useCarbonStore(s => s.insights);
 
   const { label, colorClass, bgClass } = getFootprintLabel(result.vs_global_average_pct);
 
@@ -134,10 +134,7 @@ export const ResultsDisplay = ({ result }: ResultsDisplayProps) => {
         <h3 className="text-base font-semibold text-gray-800 mb-4 flex items-center gap-2">
           <span aria-hidden="true">🔍</span> Breakdown by Category
         </h3>
-        <CategoryChart
-          breakdown={result.breakdown}
-          ranked_categories={result.ranked_categories}
-        />
+        <CategoryChart breakdown={result.breakdown} ranked_categories={result.ranked_categories} />
       </div>
 
       {/* Get Insights CTA */}
