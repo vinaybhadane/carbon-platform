@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ def _write_to_bigquery(
 
     rows = [
         {
-            "timestamp": datetime.now(tz=timezone.utc).isoformat(),
+            "timestamp": datetime.now(tz=UTC).isoformat(),
             "total_kg": total_kg,
             "diet_type": diet_type,
             "insight_source": insight_source,

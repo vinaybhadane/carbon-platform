@@ -8,16 +8,15 @@ the BigQuery/Pub/Sub fire-and-forget log helpers.
 from __future__ import annotations
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
 
 from app.models.carbon import CarbonResult
 from app.models.insights import InsightItem
 from app.services import firestore_service
 
-
 # ---------------------------------------------------------------------------
 # Shared fixtures
 # ---------------------------------------------------------------------------
+
 
 def _make_result(**kwargs) -> CarbonResult:
     defaults = dict(
@@ -145,7 +144,6 @@ class TestBigQueryLogging:
     async def test_log_event_async_catches_exceptions(self):
         """log_event_async must never raise — it catches all exceptions internally."""
         from app.services import bigquery_service
-        from app.core.config import get_settings
 
         # This will fail to connect to BigQuery (no real GCP credentials)
         # but the function should swallow the error and return None
@@ -178,4 +176,3 @@ class TestPubSubService:
             top_category="transport",
         )
         assert result is None
-

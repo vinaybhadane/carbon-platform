@@ -9,7 +9,7 @@ from __future__ import annotations
 import pytest
 
 from app.carbon.calculator import calculate_footprint, get_rule_based_insights
-from app.carbon.factors import DIET, GLOBAL_AVERAGE, PARIS_TARGET, TRANSPORT
+from app.carbon.factors import PARIS_TARGET, TRANSPORT
 
 
 class TestCalculateFootprint:
@@ -121,9 +121,9 @@ class TestCalculateFootprint:
         )
         ranked = result["ranked_categories"]
         for i in range(len(ranked) - 1):
-            assert ranked[i]["kg"] >= ranked[i + 1]["kg"], (
-                f"ranked_categories not sorted: {ranked[i]['kg']} < {ranked[i+1]['kg']}"
-            )
+            assert (
+                ranked[i]["kg"] >= ranked[i + 1]["kg"]
+            ), f"ranked_categories not sorted: {ranked[i]['kg']} < {ranked[i+1]['kg']}"
 
     def test_vs_global_average_above_one_for_high_footprint(self):
         """A heavy user should have vs_global_average_pct > 100."""
@@ -248,9 +248,9 @@ class TestRuleBasedInsights:
             ranked, breakdown, diet_type="meat_heavy", consumption_level="high"
         )
         for insight in insights:
-            assert insight["estimated_saving_kg"] > 0, (
-                f"Insight has zero/negative saving: {insight}"
-            )
+            assert (
+                insight["estimated_saving_kg"] > 0
+            ), f"Insight has zero/negative saving: {insight}"
 
     def test_rule_engine_targets_largest_category_first(self):
         """When transport is the biggest category, first insight should target transport."""

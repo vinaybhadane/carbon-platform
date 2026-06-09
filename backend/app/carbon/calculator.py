@@ -170,9 +170,7 @@ def get_rule_based_insights(
         )
 
     if flights_short_haul > 2 or flights_long_haul > 1:
-        flight_saving = (
-            min(flights_short_haul, 1) * 255.0 + min(flights_long_haul, 1) * 1620.0
-        )
+        flight_saving = min(flights_short_haul, 1) * 255.0 + min(flights_long_haul, 1) * 1620.0
         candidate_insights.append(
             {
                 "category": "transport",

@@ -5,8 +5,7 @@ Returns the availability status of all integrated Google Cloud services.
 Designed for Cloud Run health checks and monitoring dashboards.
 """
 
-
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter
 from pydantic import BaseModel
@@ -43,7 +42,7 @@ async def health_check() -> HealthResponse:
     return HealthResponse(
         status="healthy",
         version="1.0.0",
-        timestamp=datetime.now(tz=timezone.utc),
+        timestamp=datetime.now(tz=UTC),
         services={
             "gemini": settings.USE_GEMINI,
             "firestore": settings.USE_FIRESTORE,

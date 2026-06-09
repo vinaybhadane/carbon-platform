@@ -10,7 +10,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from app.models.carbon import CarbonResult
@@ -46,7 +46,7 @@ def _build_document(
     """Build the Firestore document payload."""
     return {
         "device_id": device_id,
-        "timestamp": datetime.now(tz=timezone.utc),
+        "timestamp": datetime.now(tz=UTC),
         "total_kg": result.total_kg,
         "breakdown": result.breakdown,
         "ranked_categories": result.ranked_categories,
@@ -141,7 +141,7 @@ async def save_entry_memory(
     entry: dict[str, Any] = {
         "id": doc_id,
         "device_id": device_id,
-        "timestamp": datetime.now(tz=timezone.utc).isoformat(),
+        "timestamp": datetime.now(tz=UTC).isoformat(),
         "total_kg": result.total_kg,
         "breakdown": result.breakdown,
         "ranked_categories": result.ranked_categories,

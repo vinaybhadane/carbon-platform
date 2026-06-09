@@ -9,7 +9,6 @@ After generating insights, fires background tasks to:
   - Publish event to Pub/Sub
 """
 
-
 import asyncio
 import logging
 

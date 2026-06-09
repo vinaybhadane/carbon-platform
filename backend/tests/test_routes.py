@@ -9,7 +9,6 @@ from __future__ import annotations
 
 from unittest.mock import AsyncMock, patch
 
-import pytest
 from fastapi.testclient import TestClient
 
 from app.services.gemini_service import GeminiUnavailableError
@@ -71,9 +70,7 @@ class TestCalculateEndpoint:
         )
         assert response.status_code == 422
 
-    def test_calculate_total_kg_is_positive(
-        self, client: TestClient, sample_carbon_input: dict
-    ):
+    def test_calculate_total_kg_is_positive(self, client: TestClient, sample_carbon_input: dict):
         response = client.post("/api/calculate", json=sample_carbon_input)
         assert response.json()["total_kg"] > 0
 
@@ -119,11 +116,14 @@ class TestInsightsEndpoint:
         sample_carbon_result: dict,
     ):
         """When Gemini raises GeminiUnavailableError, source should be 'rules'."""
-        with patch(
-            "app.routes.insights.generate_insights_gemini",
-            new_callable=AsyncMock,
-            side_effect=GeminiUnavailableError("network timeout"),
-        ), patch("app.routes.insights.get_settings") as mock_settings:
+        with (
+            patch(
+                "app.routes.insights.generate_insights_gemini",
+                new_callable=AsyncMock,
+                side_effect=GeminiUnavailableError("network timeout"),
+            ),
+            patch("app.routes.insights.get_settings") as mock_settings,
+        ):
             mock_settings.return_value.USE_GEMINI = True
             mock_settings.return_value.USE_BIGQUERY = False
             mock_settings.return_value.USE_PUBSUB = False

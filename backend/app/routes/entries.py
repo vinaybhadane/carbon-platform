@@ -5,9 +5,8 @@ POST /api/entries       — Persist a carbon entry + insights to Firestore.
 GET  /api/entries/{id} — Retrieve history for a specific device.
 """
 
-
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException, Path, Request
 from pydantic import BaseModel
@@ -65,7 +64,7 @@ async def save_entry(request: Request, body: SaveEntryRequest) -> SaveEntryRespo
 
     return SaveEntryResponse(
         id=doc_id,
-        saved_at=datetime.now(tz=timezone.utc),
+        saved_at=datetime.now(tz=UTC),
     )
 
 

@@ -11,7 +11,7 @@ import pytest
 from pydantic import ValidationError
 
 from app.models.carbon import CarbonInput
-from app.models.insights import InsightItem, InsightsRequest
+from app.models.insights import InsightItem
 
 
 class TestCarbonInputValidation:

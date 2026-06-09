@@ -68,15 +68,18 @@ def mock_gemini():
 @pytest.fixture
 def mock_firestore():
     """Mock both save and get_history Firestore calls."""
-    with patch(
-        "app.routes.entries.firestore_service.save_entry",
-        new_callable=AsyncMock,
-        return_value="test-doc-id-abc123",
-    ) as mock_save, patch(
-        "app.routes.entries.firestore_service.get_history",
-        new_callable=AsyncMock,
-        return_value=[],
-    ) as mock_get:
+    with (
+        patch(
+            "app.routes.entries.firestore_service.save_entry",
+            new_callable=AsyncMock,
+            return_value="test-doc-id-abc123",
+        ) as mock_save,
+        patch(
+            "app.routes.entries.firestore_service.get_history",
+            new_callable=AsyncMock,
+            return_value=[],
+        ) as mock_get,
+    ):
         yield mock_save, mock_get
 
 

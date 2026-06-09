@@ -5,7 +5,6 @@ Accepts validated lifestyle inputs, delegates to the pure carbon calculator,
 and returns structured results with category breakdown and benchmark comparisons.
 """
 
-
 from fastapi import APIRouter, Request
 
 from app.carbon.calculator import calculate_footprint

@@ -8,13 +8,12 @@ Verifies that:
 
 from __future__ import annotations
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from app.carbon.calculator import get_rule_based_insights
 from app.services.gemini_service import GeminiUnavailableError, generate_insights_gemini
-
 
 # ---------------------------------------------------------------------------
 # Shared helpers
@@ -54,8 +53,10 @@ class TestGeminiFallbackTriggers:
     @pytest.mark.asyncio
     async def test_network_error_triggers_unavailable_error(self):
         """A network-level exception inside generate_insights_gemini raises GeminiUnavailableError."""
-        with patch("app.services.gemini_service.get_settings", return_value=_make_settings()), \
-             patch("builtins.__import__", side_effect=ConnectionError("network error")):
+        with (
+            patch("app.services.gemini_service.get_settings", return_value=_make_settings()),
+            patch("builtins.__import__", side_effect=ConnectionError("network error")),
+        ):
             with pytest.raises(GeminiUnavailableError):
                 await generate_insights_gemini(SAMPLE_RANKED, SAMPLE_BREAKDOWN, 6667.0)
 
@@ -69,35 +70,44 @@ class TestGeminiFallbackTriggers:
         mock_gm_class = MagicMock(return_value=mock_model)
         mock_gen_config = MagicMock()
 
-        with patch("app.services.gemini_service.get_settings", return_value=_make_settings()), \
-             patch.dict("sys.modules", {
-                 "vertexai": mock_vertexai,
-                 "vertexai.generative_models": MagicMock(
-                     GenerativeModel=mock_gm_class,
-                     GenerationConfig=mock_gen_config,
-                 ),
-             }):
+        with (
+            patch("app.services.gemini_service.get_settings", return_value=_make_settings()),
+            patch.dict(
+                "sys.modules",
+                {
+                    "vertexai": mock_vertexai,
+                    "vertexai.generative_models": MagicMock(
+                        GenerativeModel=mock_gm_class,
+                        GenerationConfig=mock_gen_config,
+                    ),
+                },
+            ),
+        ):
             with pytest.raises((GeminiUnavailableError, Exception)):
                 await generate_insights_gemini(SAMPLE_RANKED, SAMPLE_BREAKDOWN, 6667.0)
 
     @pytest.mark.asyncio
     async def test_timeout_triggers_unavailable_error(self):
         """asyncio.wait_for timeout should be wrapped in GeminiUnavailableError."""
-        import asyncio
 
         mock_vertexai = MagicMock()
         mock_gm_class = MagicMock()
         mock_gen_config = MagicMock()
 
-        with patch("app.services.gemini_service.get_settings", return_value=_make_settings()), \
-             patch.dict("sys.modules", {
-                 "vertexai": mock_vertexai,
-                 "vertexai.generative_models": MagicMock(
-                     GenerativeModel=mock_gm_class,
-                     GenerationConfig=mock_gen_config,
-                 ),
-             }), \
-             patch("asyncio.wait_for", side_effect=asyncio.TimeoutError()):
+        with (
+            patch("app.services.gemini_service.get_settings", return_value=_make_settings()),
+            patch.dict(
+                "sys.modules",
+                {
+                    "vertexai": mock_vertexai,
+                    "vertexai.generative_models": MagicMock(
+                        GenerativeModel=mock_gm_class,
+                        GenerationConfig=mock_gen_config,
+                    ),
+                },
+            ),
+            patch("asyncio.wait_for", side_effect=TimeoutError()),
+        ):
             with pytest.raises(GeminiUnavailableError):
                 await generate_insights_gemini(SAMPLE_RANKED, SAMPLE_BREAKDOWN, 6667.0)
 
@@ -111,14 +121,19 @@ class TestGeminiFallbackTriggers:
         mock_gm_class = MagicMock(return_value=mock_model)
         mock_gen_config = MagicMock()
 
-        with patch("app.services.gemini_service.get_settings", return_value=_make_settings()), \
-             patch.dict("sys.modules", {
-                 "vertexai": mock_vertexai,
-                 "vertexai.generative_models": MagicMock(
-                     GenerativeModel=mock_gm_class,
-                     GenerationConfig=mock_gen_config,
-                 ),
-             }):
+        with (
+            patch("app.services.gemini_service.get_settings", return_value=_make_settings()),
+            patch.dict(
+                "sys.modules",
+                {
+                    "vertexai": mock_vertexai,
+                    "vertexai.generative_models": MagicMock(
+                        GenerativeModel=mock_gm_class,
+                        GenerationConfig=mock_gen_config,
+                    ),
+                },
+            ),
+        ):
             with pytest.raises((GeminiUnavailableError, Exception)):
                 await generate_insights_gemini(SAMPLE_RANKED, SAMPLE_BREAKDOWN, 6667.0)
 
@@ -156,9 +171,9 @@ class TestRuleEngineRobustness:
                 insights = get_rule_based_insights(
                     ranked, breakdown, diet_type=diet, consumption_level=consumption
                 )
-                assert len(insights) == 3, (
-                    f"Expected 3 insights for diet={diet}, consumption={consumption}"
-                )
+                assert (
+                    len(insights) == 3
+                ), f"Expected 3 insights for diet={diet}, consumption={consumption}"
 
     def test_rule_engine_insight_for_heavy_meat_eater(self):
         """Meat-heavy user's insights must include a diet-focused action."""
