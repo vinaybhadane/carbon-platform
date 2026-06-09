@@ -9,9 +9,11 @@ After generating insights, fires background tasks to:
   - Publish event to Pub/Sub
 """
 
+from __future__ import annotations
+
 import asyncio
 import logging
-from typing import Literal, cast
+from typing import Literal, cast, get_type_hints
 
 from fastapi import APIRouter, Request
 
@@ -28,15 +30,6 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["Insights"])
 
 
-@router.post(
-    "/insights",
-    response_model=InsightsResponse,
-    summary="Generate personalised carbon reduction insights",
-    description=(
-        "Generate 3 personalised, quantified carbon reduction actions. "
-        "Uses Gemini 1.5 Flash (primary) with automatic fallback to rule-based engine."
-    ),
-)
 @limiter.limit(INSIGHTS_LIMIT)
 async def get_insights(request: Request, body: InsightsRequest) -> InsightsResponse:
     """
@@ -121,3 +114,24 @@ def _apply_rule_engine(result: CarbonResult) -> list[InsightItem]:
         flights_long_haul=flights_long,
     )
     return [InsightItem(**d) for d in raw_dicts]
+
+
+# Resolve annotations on functions
+get_insights.__annotations__ = get_type_hints(get_insights)
+if hasattr(get_insights, "__wrapped__"):
+    get_insights.__wrapped__.__annotations__ = get_type_hints(get_insights.__wrapped__)
+
+_apply_rule_engine.__annotations__ = get_type_hints(_apply_rule_engine)
+
+# Add routes manually to the router
+router.add_api_route(
+    "/insights",
+    endpoint=get_insights,
+    methods=["POST"],
+    response_model=InsightsResponse,
+    summary="Generate personalised carbon reduction insights",
+    description=(
+        "Generate 3 personalised, quantified carbon reduction actions. "
+        "Uses Gemini 1.5 Flash (primary) with automatic fallback to rule-based engine."
+    ),
+)
