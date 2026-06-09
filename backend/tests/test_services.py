@@ -8,10 +8,9 @@ the real GCP SDK operations, and endpoint conditional routing paths.
 from __future__ import annotations
 
 import json
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from datetime import UTC, datetime
-from typing import Any
-from unittest.mock import patch, MagicMock, AsyncMock
 
 from app.models.carbon import CarbonResult
 from app.models.insights import InsightItem
@@ -169,7 +168,7 @@ class TestFirestoreServiceIntegration:
         mock_client = MagicMock()
         mock_doc1 = MagicMock()
         mock_doc1.id = "doc-1"
-        
+
         class MockTimestamp:
             def isoformat(self):
                 return "2025-06-01T12:00:00Z"
