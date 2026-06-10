@@ -8,9 +8,13 @@ tailored to the user's actual emission profile.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from typing import Any
+
+import vertexai
+from vertexai.generative_models import GenerationConfig, GenerativeModel
 
 from app.core.config import get_settings
 from app.models.insights import InsightItem
@@ -91,9 +95,6 @@ async def generate_insights_gemini(
     settings = get_settings()
 
     try:
-        import vertexai
-        from vertexai.generative_models import GenerationConfig, GenerativeModel
-
         vertexai.init(project=settings.PROJECT_ID, location=settings.REGION)
 
         model = GenerativeModel(settings.GEMINI_MODEL)
@@ -107,8 +108,6 @@ async def generate_insights_gemini(
         )
 
         # Run synchronous SDK call in a thread-pool to avoid blocking event loop
-        import asyncio
-
         response = await asyncio.wait_for(
             asyncio.get_event_loop().run_in_executor(
                 None,

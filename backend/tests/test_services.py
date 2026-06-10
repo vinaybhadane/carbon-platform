@@ -12,9 +12,11 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
+from app.core.config import Settings
 from app.models.carbon import CarbonResult
 from app.models.insights import InsightItem
-from app.services import firestore_service
+from app.services import bigquery_service, firestore_service, gemini_service, pubsub_service
+from app.services.gemini_service import GeminiUnavailableError
 
 # ---------------------------------------------------------------------------
 # Shared fixtures
@@ -145,8 +147,6 @@ class TestFirestoreServiceIntegration:
 
     @pytest.mark.asyncio
     async def test_firestore_save_entry_success(self):
-        from app.services import firestore_service
-
         mock_client = MagicMock()
         mock_doc_ref = MagicMock()
         mock_doc_ref.id = "mock-doc-123"
@@ -161,8 +161,6 @@ class TestFirestoreServiceIntegration:
 
     @pytest.mark.asyncio
     async def test_firestore_get_history_success(self):
-        from app.services import firestore_service
-
         mock_client = MagicMock()
         mock_doc1 = MagicMock()
         mock_doc1.id = "doc-1"
@@ -203,8 +201,6 @@ class TestBigQueryLogging:
     @pytest.mark.asyncio
     async def test_log_event_async_catches_exceptions(self):
         """log_event_async must never raise — it catches all exceptions internally."""
-        from app.services import bigquery_service
-
         with patch("google.cloud.bigquery.Client", side_effect=Exception("BQ failure")):
             result = await bigquery_service.log_event_async(
                 total_kg=5000.0,
@@ -216,8 +212,6 @@ class TestBigQueryLogging:
 
     @pytest.mark.asyncio
     async def test_bigquery_log_event_success(self):
-        from app.services import bigquery_service
-
         mock_client = MagicMock()
         mock_client.insert_rows_json.return_value = []
 
@@ -239,8 +233,6 @@ class TestPubSubService:
     @pytest.mark.asyncio
     async def test_publish_insight_request_catches_exceptions(self):
         """publish_insight_request must never raise — it catches all exceptions internally."""
-        from app.services import pubsub_service
-
         with patch("google.cloud.pubsub_v1.PublisherClient", side_effect=Exception("PubSub down")):
             result = await pubsub_service.publish_insight_request(
                 footprint_total=5000.0,
@@ -250,8 +242,6 @@ class TestPubSubService:
 
     @pytest.mark.asyncio
     async def test_pubsub_publish_success(self):
-        from app.services import pubsub_service
-
         mock_publisher = MagicMock()
         mock_future = MagicMock()
         mock_future.result.return_value = "msg-999"
@@ -274,8 +264,6 @@ class TestGeminiService:
 
     @pytest.mark.asyncio
     async def test_gemini_generate_insights_success(self):
-        from app.services import gemini_service
-
         mock_response = MagicMock()
         mock_response.text = json.dumps(
             [
@@ -307,8 +295,8 @@ class TestGeminiService:
         mock_model.generate_content.return_value = mock_response
 
         with (
-            patch("vertexai.init"),
-            patch("vertexai.generative_models.GenerativeModel", return_value=mock_model),
+            patch("app.services.gemini_service.vertexai.init"),
+            patch("app.services.gemini_service.GenerativeModel", return_value=mock_model),
         ):
             res = await gemini_service.generate_insights_gemini(
                 ranked_categories=[], breakdown={}, total_kg=4000.0
@@ -318,8 +306,6 @@ class TestGeminiService:
 
     @pytest.mark.asyncio
     async def test_gemini_generate_insights_with_code_fences(self):
-        from app.services import gemini_service
-
         mock_response = MagicMock()
         mock_response.text = (
             "```json\n"
@@ -355,8 +341,8 @@ class TestGeminiService:
         mock_model.generate_content.return_value = mock_response
 
         with (
-            patch("vertexai.init"),
-            patch("vertexai.generative_models.GenerativeModel", return_value=mock_model),
+            patch("app.services.gemini_service.vertexai.init"),
+            patch("app.services.gemini_service.GenerativeModel", return_value=mock_model),
         ):
             res = await gemini_service.generate_insights_gemini(
                 ranked_categories=[], breakdown={}, total_kg=4000.0
@@ -366,15 +352,12 @@ class TestGeminiService:
 
     @pytest.mark.asyncio
     async def test_gemini_generate_insights_generic_error_wraps(self):
-        from app.services import gemini_service
-        from app.services.gemini_service import GeminiUnavailableError
-
         mock_model = MagicMock()
         mock_model.generate_content.side_effect = Exception("API limit")
 
         with (
-            patch("vertexai.init"),
-            patch("vertexai.generative_models.GenerativeModel", return_value=mock_model),
+            patch("app.services.gemini_service.vertexai.init"),
+            patch("app.services.gemini_service.GenerativeModel", return_value=mock_model),
         ):
             with pytest.raises(GeminiUnavailableError):
                 await gemini_service.generate_insights_gemini(
@@ -392,8 +375,6 @@ class TestRoutingConditionalBranches:
 
     @pytest.mark.asyncio
     async def test_routes_save_entry_firestore_branch(self, client):
-        from app.core.config import Settings
-
         mock_settings = Settings(
             USE_FIRESTORE=True, USE_GEMINI=False, USE_BIGQUERY=False, USE_PUBSUB=False
         )
@@ -429,8 +410,6 @@ class TestRoutingConditionalBranches:
 
     @pytest.mark.asyncio
     async def test_routes_get_entries_firestore_branch(self, client):
-        from app.core.config import Settings
-
         mock_settings = Settings(
             USE_FIRESTORE=True, USE_GEMINI=False, USE_BIGQUERY=False, USE_PUBSUB=False
         )
@@ -449,8 +428,6 @@ class TestRoutingConditionalBranches:
 
     @pytest.mark.asyncio
     async def test_routes_insights_analytics_branches(self, client):
-        from app.core.config import Settings
-
         mock_settings = Settings(
             USE_GEMINI=False, USE_FIRESTORE=False, USE_BIGQUERY=True, USE_PUBSUB=True
         )

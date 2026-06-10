@@ -21,6 +21,7 @@ os.environ.setdefault("USE_PUBSUB", "false")
 os.environ.setdefault("PROJECT_ID", "test-project")
 
 from app.main import app  # noqa: E402
+from app.models.insights import InsightItem  # noqa: E402
 
 
 @pytest.fixture(scope="session")
@@ -59,8 +60,6 @@ def mock_gemini():
         "app.routes.insights.generate_insights_gemini",
         new_callable=AsyncMock,
     ) as mock:
-        from app.models.insights import InsightItem
-
         mock.return_value = [InsightItem(**d) for d in mock_insights]
         yield mock
 
